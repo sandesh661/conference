@@ -49,7 +49,7 @@
                                         Distance
                                     </button>
                                     <button class="flex-1 text-purple-800 font-semibold text-right text-xs pt-4 ml-2">
-                                        <span id="radius">10</span> mi radius
+                                        <span id="radius">10</span> km radius
                                     </button>
                                 </div>
                             <div>
@@ -65,22 +65,6 @@
 
                         <div class="my-6">
                             <div id="userList">
-                                <!-- <div class="flex align-middle my-4 leading-relaxed">
-                                    <img src="" alt="" class="w-8 h-8 bg-gray-700 rounded-full mr-4">
-                                    <p class="h-8 leading-loose">Nombeko Mamballa</p>
-                                </div>
-                                <div class="flex align-middle my-4 leading-relaxed">
-                                    <img src="" alt="" class="w-8 h-8 bg-gray-700 rounded-full mr-4">
-                                    <p class="h-8 leading-loose">Nombeko Mamballa</p>
-                                </div>
-                                <div class="flex align-middle my-4 leading-relaxed">
-                                    <img src="" alt="" class="w-8 h-8 bg-gray-700 rounded-full mr-4">
-                                    <p class="h-8 leading-loose">Nombeko Mamballa</p>
-                                </div>
-                                <div class="flex align-middle my-4 leading-relaxed">
-                                    <img src="" alt="" class="w-8 h-8 bg-gray-700 rounded-full mr-4">
-                                    <p class="h-8 leading-loose">Nombeko Mamballa</p>
-                                </div> -->
                             </div>
                         </div>
                     </div>
@@ -95,13 +79,86 @@
     </div>
 </body>
 <script>
-    var userinfo ="";
-    for (i = 0; i < userList.length; i++) {
-        userinfo += '<div class="flex align-middle my-4 leading-relaxed">' + 
-             '<img src="'+ userList[i].image+'" alt="" class="w-8 h-8 bg-gray-700 rounded-full mr-4">' +
-             '<p class="h-8 leading-loose">'+ userList[i].name+'</p>' +
-            '</div>';          
-      }
-    document.getElementById("userList").innerHTML = userinfo;
+    function onTabbuttonClick(event, className){
+        document.querySelector(".tab-content.active").classList.remove("active");
+        document.querySelector(".tab-content."+className).classList.add("active");
+
+        document.querySelector(".custom-tab-btn.active").classList.remove("active");
+        event.classList.add("active");
+    }
+
+    function rangeSelector(){
+        var slider = document.getElementById("myRange");
+        var output = document.getElementById("radius");
+        output.innerHTML = slider.value;
+
+        slider.onchange = function() {
+            output.innerHTML = this.value;
+            loadProfilesInRange()
+        }
+    }
+
+    function loadProfilesInRange () {
+        let range = document.getElementById("myRange").value;
+        fetch('http://35.178.90.181:8000/v1/profile/nearby/?limit=20', {
+            method: 'POST',
+            body: JSON.stringify({
+                distance: range
+            }),
+            headers: {
+                'content-type': 'application/json',
+                'Authorization': 'Token 748f60eb601d140b7adb7d885bc890a02c1d39d2'
+            }
+        }).then(resp => {
+            if (!resp.ok) throw resp
+            return resp.json()
+        }).then(resp => {
+            console.log(resp)
+            let usersList = ''
+            let locations = []
+
+            resp.results.forEach((user, index) => {
+                usersList += '<div class="flex align-middle my-4 leading-relaxed">' + 
+                '<img src="https://placeimg.com/50/50/people" alt="" class="w-8 h-8 bg-gray-700 rounded-full mr-4">' +
+                '<p class="h-8 leading-loose">'+ user.first_name +' '+ user.last_name +'</p>' +
+                '</div>';
+                locations.push([
+                    `${user.first_name} ${user.last_name}`,
+                    user.latitude,
+                    user.longitude,
+                    index + 1
+                ])
+            })
+            document.getElementById("userList").innerHTML = usersList;
+
+            let marker
+            var infowindow = new google.maps.InfoWindow();
+            var bounds = new google.maps.LatLngBounds();
+
+            for (i = 0; i < locations.length; i++) {
+                marker = new google.maps.Marker({
+                    position: new google.maps.LatLng(locations[i][1], locations[i][2]),
+                    icon: "./img/marker-icon.png",
+                    //icon: "https://developers.google.com/maps/documentation/javascript/examples/full/images/library_maps.png",
+                    map: map
+                });
+
+                bounds.extend(marker.position);
+
+                google.maps.event.addListener(marker, 'click', (function (marker, i) {
+                    return function () {
+                        infowindow.setContent(locations[i][0]);
+                        infowindow.open(map, marker);
+                    }
+                })(marker, i));
+
+                marker.setMap(window.map);
+            }
+            map.fitBounds(bounds);
+
+        }).catch(console.error)
+    }
+
+    loadProfilesInRange()
 </script>
 </html>
