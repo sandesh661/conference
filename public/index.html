@@ -52,8 +52,10 @@
                     'content-type': 'application/json'
                 }
             }).then(resp => {
-                console.log('Successful login', resp)
                 if (!resp.ok) throw resp
+                return resp.json()
+            }).then(resp => {
+                localStorage.setItem('key', resp.key)
                 window.location.href = 'discover.html'
             }).catch(() => {
                 window.alert('Invalid credentials')
@@ -80,11 +82,13 @@
                 'content-type': 'application/json'
             }
         }).then(resp => {
-            console.log('Successful login', resp)
             if (!resp.ok) throw resp
+            return resp.json()
+        }).then(resp => {
+            localStorage.setItem('key', resp.key)
             window.location.href = 'discover.html'
         }).catch(() => {
-            window.alert('Invalid credentials')
+            window.alert('An error occurred.')
         })
     }
     function onFailure(error) {

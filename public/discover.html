@@ -107,7 +107,7 @@
             }),
             headers: {
                 'content-type': 'application/json',
-                'Authorization': 'Token 748f60eb601d140b7adb7d885bc890a02c1d39d2'
+                'Authorization': `Token ${localStorage.getItem('key')}`
             }
         }).then(resp => {
             if (!resp.ok) throw resp
