@@ -30,17 +30,18 @@
                         </div>
                         <div class="-mt-16 mx-6 flex">
                             <img src="https://randomuser.me/api/portraits/women/29.jpg" alt="" class="w-32 h-32 bg-gray-800 rounded-full"/> 
-                            <h1 id="profile-fullname" class="self-end mb-6 mx-6 text-lg font-bold tracking-wide">Catherine Marley</h1>
+                            <h1 id="profile-fullname" class="self-end mb-6 mx-6 text-lg font-bold tracking-wide"></h1>
                         </div>
                     </div>
 
                     <div class="px-4 my-6">
                         <div class="flex justify-between">
                             <h1 class="font-bold text-xl">Bio</h1>
-                            <a href="#" class=" text-blue-400 hover:underline">Edit</a>
+                            <button onclick="editbio()" id="editbio" class="text-blue-400 hover:underline">Edit</button>
+                            <button onclick="savebio()" id="savebio" class="text-blue-400 hover:underline hidden">Save</button>
                         </div>
                         <p id="profile-about" class="text-sm">
-                            Catherine Marley is a Human Resources specialist with a decade of successful experience in hiring and employee management. 
+                            
                         </p>
                     </div>
 
@@ -143,6 +144,7 @@
             if (!resp.ok) throw resp
             return resp.json()
         }).then(resp => {
+            window.user = resp;
             displayData(resp)
             localStorage.setItem('profile', resp)
         }).catch(console.error)
@@ -155,13 +157,43 @@
     }
 
     function main () {
-        let user = localStorage.getItem('user')
-        if (user) {
-            user = JSON.parse(user)
-            displayData(user)
+        window.user = localStorage.getItem('user')
+        if (window.user) {
+            window.user = JSON.parse(user)
+            displayData(window.user)
         } else {
             loadUserProfile()
         }
+    }
+
+    function editbio() {
+        let user = window
+        document.querySelector('#profile-about').innerHTML = `<input type="text" id="editedAbout" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" value="${window.user.about}">`
+        document.querySelector('#editbio').classList.add('hidden')
+        document.querySelector('#savebio').classList.remove('hidden')
+    }
+
+    function savebio() {
+        const editedAbout = document.querySelector('#editedAbout').value
+        document.querySelector('#editbio').classList.remove('hidden')
+        document.querySelector('#savebio').classList.add('hidden')
+        document.querySelector('#profile-about').innerHTML = editedAbout
+        fetch('http://35.178.90.181:8000/v1/profile/data/', {
+            method: 'POST',
+            headers: {
+                'content-type': 'application/json',
+                'Authorization': `Token ${localStorage.getItem('key')}`
+            },
+            body: JSON.stringify({
+                about: editedAbout
+            })
+        }).then(resp => {
+            if (!resp.ok) throw resp
+            return resp.json()
+        }).then(resp => {
+            displayData(resp)
+            window.user = resp
+        }).catch(console.error)
     }
 
     main()
