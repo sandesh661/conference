@@ -19,8 +19,10 @@
             <div class="links w-full text-center text-center mt-6 border-t border-gray-100 text-gray-500">
                 <a href="./discover.html" class="block leftNavBar link border-l-4 border-purple-800 bg-purple-200 text-purple-800 py-2">Discover</a>
                 <a href="./home.html" class="block leftNavBar link py-2">Home</a>
+                <a href="./profile.html" class="block leftNavBar link py-2">Profile</a>
                 <a href="./messages.html" class="block leftNavBar link py-2">Messages</a>
                 <a href="./notifications.html" class="block leftNavBar link py-2">Notifications</a>
+                <button onclick="logout()" class="tex-center w-full block leftNavBar link my-2">Logout</button>
             </div>
         </div>
         <div class="h-screen w-10/12 bg-gray-100 p-4">
@@ -174,6 +176,11 @@
             document.querySelector('#profile-fname').innerHTML = resp.first_name
             localStorage.setItem('profile', JSON.stringify(resp))
         }).catch(console.error)
+    }
+
+    function logout() {
+        localStorage.clear()
+        window.location.href="index.html"
     }
 
     loadProfilesInRange()
