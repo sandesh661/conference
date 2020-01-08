@@ -41,9 +41,9 @@
                             <button onclick="onTabbuttonClick(this, 'nearest')" class="flex-1 custom-tab-btn active text-purple-800 text-xs hover:bg-purple-300 py-2 mr-2 rounded">
                                 Nearest
                             </button>
-                            <!-- <button onclick="onTabbuttonClick(this, 'recommended')" class="flex-1 custom-tab-btn text-purple-800 text-xs hover:bg-purple-300 py-2 ml-2 rounded">
+                            <button onclick="onTabbuttonClick(this, 'recommended')" class="flex-1 custom-tab-btn text-purple-800 text-xs hover:bg-purple-300 py-2 ml-2 rounded">
                                 Recommended
-                            </button> -->
+                            </button>
                         </div>
                         <div class="tab-content nearest active">
                             <div class="flex">
@@ -58,12 +58,12 @@
                                 <input type="range" min="1" max="100" value="50" class="slider" id="myRange">
                             </div>
                         </div>
-                        <!-- <div class="tab-content recommended">
+                        <div class="tab-content recommended">
                             <div class="font-semibold text-xs pt-4 pb-2">Recommended on the basic of interests</div>
                             <div class="bg-purple-200 text-purple-800 text-xs w-auto inline-block px-2 py-px rounded-full"> Design </div>
                             <div class="bg-purple-200 text-purple-800 text-xs w-auto inline-block px-2 py-px rounded-full"> Hacking </div>
                             <div class="bg-purple-200 text-purple-800 text-xs w-auto inline-block px-2 py-px rounded-full"> Web technologies </div>
-                        </div> -->
+                        </div>
 
                         <div class="my-6">
                             <div id="userList">
@@ -82,6 +82,13 @@
 </body>
 <script>
     function onTabbuttonClick(event, className){
+        if (className === 'nearest') {
+            console.log('show nearest')
+            listProfiles(window.nearestProfiles)
+        } else {
+            console.log('show recommended')
+            listProfiles(window.recommendedProfiles)
+        }
         document.querySelector(".tab-content.active").classList.remove("active");
         document.querySelector(".tab-content."+className).classList.add("active");
 
@@ -116,47 +123,8 @@
             return resp.json()
         }).then(resp => {
             console.log(resp)
-            let usersList = ''
-            let locations = []
-
-            resp.results.forEach((user, index) => {
-                usersList += '<div class="flex align-middle my-4 leading-relaxed">' + 
-                '<img src="https://placeimg.com/50/50/people" alt="" class="w-8 h-8 bg-gray-700 rounded-full mr-4">' +
-                '<p class="h-8 leading-loose">'+ user.first_name +' '+ user.last_name +'</p>' +
-                '</div>';
-                locations.push([
-                    `${user.first_name} ${user.last_name}`,
-                    user.latitude,
-                    user.longitude,
-                    index + 1
-                ])
-            })
-            document.getElementById("userList").innerHTML = usersList;
-
-            let marker
-            var infowindow = new google.maps.InfoWindow();
-            var bounds = new google.maps.LatLngBounds();
-
-            for (i = 0; i < locations.length; i++) {
-                marker = new google.maps.Marker({
-                    position: new google.maps.LatLng(locations[i][1], locations[i][2]),
-                    icon: "./img/marker-icon.png",
-                    //icon: "https://developers.google.com/maps/documentation/javascript/examples/full/images/library_maps.png",
-                    map: map
-                });
-
-                bounds.extend(marker.position);
-
-                google.maps.event.addListener(marker, 'click', (function (marker, i) {
-                    return function () {
-                        infowindow.setContent(locations[i][0]);
-                        infowindow.open(map, marker);
-                    }
-                })(marker, i));
-
-                marker.setMap(window.map);
-            }
-            map.fitBounds(bounds);
+            window.nearestProfiles = resp.results
+            listProfiles(resp.results)
 
         }).catch(console.error)
     }
@@ -180,8 +148,10 @@
 
     function getLocation() {
         if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition((position) => {
+            navigator.geolocation.getCurrentPosition(function success(position) {
                 sendLocation(position.coords.latitude, position.coords.longitude)
+            }, function error(err) {
+                console.log(err)
             });
         } else {
             alert('Geolocation not supported by this browser')
@@ -202,7 +172,68 @@
         })
     }
 
-    getLocation()
+    function getRecommendations () {
+        let range = document.getElementById("myRange").value;
+        fetch('http://35.178.90.181:8000/v1/profile/recommendation/?limit=20', {
+            method: 'POST',
+            body: JSON.stringify({
+                distance: range
+            }),
+            headers: {
+                'content-type': 'application/json',
+                'Authorization': `Token ${localStorage.getItem('key')}`
+            }
+        }).then(resp => {
+            if (!resp.ok) throw resp
+            return resp.json()
+        }).then(resp => {
+            window.recommendedProfiles = resp.results
+        }).catch(console.error)
+    }
+
+    function listProfiles (profiles) {
+        let usersList = ''
+        let locations = []
+
+        profiles.forEach((user, index) => {
+            usersList += '<div class="flex align-middle my-4 leading-relaxed">' + 
+            '<img src="https://placeimg.com/50/50/people" alt="" class="w-8 h-8 bg-gray-700 rounded-full mr-4">' +
+            '<p class="h-8 leading-loose">'+ user.first_name +' '+ user.last_name +'</p>' +
+            '</div>';
+            locations.push([
+                `${user.first_name} ${user.last_name}`,
+                user.latitude,
+                user.longitude,
+                index + 1
+            ])
+        })
+        document.getElementById("userList").innerHTML = usersList;
+
+        let marker
+        var infowindow = new google.maps.InfoWindow();
+        var bounds = new google.maps.LatLngBounds();
+
+        for (i = 0; i < locations.length; i++) {
+            marker = new google.maps.Marker({
+                position: new google.maps.LatLng(locations[i][1], locations[i][2]),
+                icon: "./img/marker-icon.png",
+                //icon: "https://developers.google.com/maps/documentation/javascript/examples/full/images/library_maps.png",
+                map: map
+            });
+
+            bounds.extend(marker.position);
+
+            google.maps.event.addListener(marker, 'click', (function (marker, i) {
+                return function () {
+                    infowindow.setContent(locations[i][0]);
+                    infowindow.open(map, marker);
+                }
+            })(marker, i));
+
+            marker.setMap(window.map);
+        }
+        map.fitBounds(bounds);
+    }
 
     function logout() {
         localStorage.clear()
@@ -211,5 +242,7 @@
 
     loadProfilesInRange()
     loadUserProfile()
+    getLocation()
+    getRecommendations()
 </script>
 </html>
