@@ -198,13 +198,14 @@
         profiles.forEach((user, index) => {
             usersList += '<div class="flex align-middle my-4 leading-relaxed">' + 
             '<img src="https://placeimg.com/50/50/people" alt="" class="w-8 h-8 bg-gray-700 rounded-full mr-4">' +
-            '<p class="h-8 leading-loose">'+ user.first_name +' '+ user.last_name +'</p>' +
+            '<p class="h-8 leading-loose"><a href="userprofile.html#'+user['user_id']+'">'+ user.first_name +' '+ user.last_name +'</a></p>' +
             '</div>';
             locations.push([
                 `${user.first_name} ${user.last_name}`,
                 user.latitude,
                 user.longitude,
-                index + 1
+                index + 1,
+                user.user_id
             ])
         })
         document.getElementById("userList").innerHTML = usersList;
@@ -225,7 +226,7 @@
 
             google.maps.event.addListener(marker, 'click', (function (marker, i) {
                 return function () {
-                    infowindow.setContent(locations[i][0]);
+                    infowindow.setContent(`<a href="userprofile.html#${locations[i][4]}">${locations[i][0]}</a>`);
                     infowindow.open(map, marker);
                 }
             })(marker, i));

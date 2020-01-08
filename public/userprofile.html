@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Conference Home</title>
+    <link rel="stylesheet" href="./build/tailwind.css" />
+    <script src="./js/userdata.js"></script>
+</head>
+<body>
+    <div class="w-full max-w-6xl flex justify-center mx-auto">
+        <div class="h-screen w-2/12 text-center pt-6">
+            <div class="logo w-full text-center my-6">LOGO</div>
+            <img src="https://randomuser.me/api/portraits/women/29.jpg" class="profile-pic bg-gray-700 w-24 h-24 rounded-full mx-auto" />
+            <a href="./profile.html" id="profile-fname" class="block leftNavBar name w-full text-purple-900 font-bold tracking-wide py-2 py-2"></a>
+            <div class="links w-full text-center text-center mt-6 border-t border-gray-100 text-gray-500">
+                <a href="./discover.html" class="block leftNavBar link my-2">Discover</a>
+                <a href="./home.html" class="block leftNavBar link my-2">Home</a>
+                <a href="./profile.html" class="block leftNavBar link my-2">Profile</a>
+                <a href="./messages.html" class="block leftNavBar link my-2">Messages</a>
+                <a href="./notifications.html" class="block leftNavBar link my-2">Notifications</a>
+                <button onclick="logout()" class="tex-center w-full block leftNavBar link my-2">Logout</button>
+            </div>
+        </div>
+        <div class="h-screen w-10/12 bg-gray-100 p-4">
+            <div class="w-full h-full flex justify-around">
+                <div class="content bg-white w-7/12 p-10">
+                    <div class="w-full">
+                        <div class="w-full rounded-lg h-40 bg-gray-700">
+                            <img src="" alt="" class="">
+                        </div>
+                        <div class="-mt-16 mx-6 flex">
+                            <img src="https://randomuser.me/api/portraits/women/29.jpg" alt="" class="w-32 h-32 bg-gray-800 rounded-full"/> 
+                            <div class="self-end mb-0 mx-6 text-lg font-bold tracking-wide">
+                                <h1 id="profile-fullname"></h1>
+                                <p>
+                                    <button onclick="sendConnect()" id="connectbtn" class="border border-purple-400 text-xs font-semibold text-white bg-purple-600 px-3 py-1 rounded">Connect</button>
+                                    <button class="border border-purple-400 text-xs font-semibold px-3 py-1 rounded">Chat</button>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="px-4 my-6">
+                        <div class="flex justify-between">
+                            <h1 class="font-bold text-xl">Bio</h1>
+                            <!-- <button onclick="editbio()" id="editbio" class="text-blue-400 hover:underline">Edit</button>
+                            <button onclick="savebio()" id="savebio" class="text-blue-400 hover:underline hidden">Save</button> -->
+                        </div>
+                        <p id="profile-about" class="text-sm">
+                            
+                        </p>
+                    </div>
+
+                    <!-- <div class="px-4 my-6">
+                        <div class="flex justify-between">
+                            <h1 class="font-bold text-xl">Interests</h1>
+                            <a href="#" class=" text-blue-400 hover:underline">Edit</a>
+                        </div>
+                        <div class="flex my-2">
+                            <div class=" bg-purple-200 px-4 rounded-lg mx-2 leading-relaxed">Design</div>
+                            <div class=" bg-purple-200 px-4 rounded-lg mx-2 leading-relaxed">Hacking</div>
+                            <div class=" bg-purple-200 px-4 rounded-lg mx-2 leading-relaxed">Web Technologies</div>
+                        </div>
+                    </div> -->
+
+                    <!-- <div class="px-4 my-6">
+                        <div class="flex justify-between">
+                            <h1 class="font-bold text-xl">Settings</h1>
+                        </div>
+                        <div class="my-2 w-8/12">
+                            <div class="flex justify-between my-2">
+                                <p>Don't show my location</p>
+                                <span class="border rounded-full border-grey flex items-center cursor-pointer w-8 bg-purple-400 justify-end">
+                                    <span class="rounded-full border w-5 h-5 border-grey shadow-inner bg-white shadow">
+                                    </span>
+                                </span>
+                            </div>
+                            <div class="flex justify-between my-2">
+                                <p>Don't show my location</p>
+                                <span class="border rounded-full border-grey flex items-center cursor-pointer w-8 bg-purple-400 justify-end">
+                                    <span class="rounded-full border w-5 h-5 border-grey shadow-inner bg-white shadow">
+                                    </span>
+                                </span>
+                            </div>
+                            <div class="flex justify-between my-2">
+                                <p>Don't show my location</p>
+                                <span class="border rounded-full border-grey flex items-center cursor-pointer w-8 bg-purple-400 justify-end">
+                                    <span class="rounded-full border w-5 h-5 border-grey shadow-inner bg-white shadow">
+                                    </span>
+                                </span>
+                            </div>
+                        </div>
+                    </div> -->
+                </div>
+
+                <div class="right-sidebar bg-white w-4/12 p-6 pt-12">
+                    <div class="search my-2">
+                        <input 
+                            class="w-full border-gray-300 border-b-2 px-2"
+                            type="text" name="" id="" 
+                            placeholder="Search people"
+                        />
+                    </div>
+                    <div class="my-6">
+                        <h2 class="font-semibold">Active Connections</h2>
+                        <div id="userList">
+                            <!-- <div class="flex align-middle my-4 leading-relaxed">
+                                <img src="" alt="" class="w-8 h-8 bg-gray-700 rounded-full mr-4">
+                                <p class="h-8 leading-loose">Nombeko Mamballa</p>
+                            </div>
+                            <div class="flex align-middle my-4 leading-relaxed">
+                                <img src="" alt="" class="w-8 h-8 bg-gray-700 rounded-full mr-4">
+                                <p class="h-8 leading-loose">Nombeko Mamballa</p>
+                            </div>
+                            <div class="flex align-middle my-4 leading-relaxed">
+                                <img src="" alt="" class="w-8 h-8 bg-gray-700 rounded-full mr-4">
+                                <p class="h-8 leading-loose">Nombeko Mamballa</p>
+                            </div>
+                            <div class="flex align-middle my-4 leading-relaxed">
+                                <img src="" alt="" class="w-8 h-8 bg-gray-700 rounded-full mr-4">
+                                <p class="h-8 leading-loose">Nombeko Mamballa</p>
+                            </div> -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+<script>
+    var userinfo ="";
+    for (i = 0; i < userList.length; i++) {
+        userinfo += '<div class="flex align-middle my-4 leading-relaxed">' + 
+             '<img src="'+ userList[i].image+'" alt="" class="w-8 h-8 bg-gray-700 rounded-full mr-4">' +
+             '<p class="h-8 leading-loose">'+ userList[i].name+'</p>' +
+            '</div>';          
+      }
+    document.getElementById("userList").innerHTML = userinfo;
+
+
+    function loadUserProfile () {
+        fetch('http://35.178.90.181:8000/v1/profile/data/', {
+            method: 'GET',
+            headers: {
+                'content-type': 'application/json',
+                'Authorization': `Token ${localStorage.getItem('key')}`
+            }
+        }).then(resp => {
+            if (!resp.ok) throw resp
+            return resp.json()
+        }).then(resp => {
+            window.user = resp;
+            displayData(resp)
+            localStorage.setItem('profile', JSON.stringify(resp))
+        }).catch(console.error)
+    }
+
+    function displayData(user) {
+        document.querySelector('#profile-fname').innerHTML = user.first_name
+        displayUserData()
+    }
+
+    function displayUserData() {
+        fetch('http://35.178.90.181:8000/v1/profile/retrieve-profile/', {
+            method: 'POST',
+            headers: {
+                'content-type': 'application/json',
+                'Authorization': `Token ${localStorage.getItem('key')}`
+            },
+            body: JSON.stringify({
+                'user_id': window.location.hash.replace('#',''),
+            })
+        }).then(resp => {
+            if (!resp.ok) throw resp
+            return resp.json()
+        }).then(user => {
+            console.log(user)
+            document.querySelector('#profile-fullname').innerHTML = `${user.first_name} ${user.last_name}`
+            document.querySelector('#profile-about').innerHTML = user.about
+        }).catch(console.error)
+
+    }
+
+    function main () {
+        window.user = localStorage.getItem('user')
+        if (window.user) {
+            window.user = JSON.parse(user)
+            displayData(window.user)
+        } else {
+            loadUserProfile()
+        }
+    }
+
+    function editbio() {
+        let user = window
+        document.querySelector('#profile-about').innerHTML = `<input type="text" id="editedAbout" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" value="${window.user.about}">`
+        document.querySelector('#editbio').classList.add('hidden')
+        document.querySelector('#savebio').classList.remove('hidden')
+    }
+
+    function savebio() {
+        const editedAbout = document.querySelector('#editedAbout').value
+        document.querySelector('#editbio').classList.remove('hidden')
+        document.querySelector('#savebio').classList.add('hidden')
+        document.querySelector('#profile-about').innerHTML = editedAbout
+        fetch('http://35.178.90.181:8000/v1/profile/data/', {
+            method: 'POST',
+            headers: {
+                'content-type': 'application/json',
+                'Authorization': `Token ${localStorage.getItem('key')}`
+            },
+            body: JSON.stringify({
+                about: editedAbout
+            })
+        }).then(resp => {
+            if (!resp.ok) throw resp
+            return resp.json()
+        }).then(resp => {
+            displayData(resp)
+            window.user = resp
+        }).catch(console.error)
+    }
+
+    function sendConnect() {
+        fetch('http://35.178.90.181:8000/v1/connections/send-request/', {
+            method: 'POST',
+            headers: {
+                'content-type': 'application/json',
+                'Authorization': `Token ${localStorage.getItem('key')}`
+            },
+            body: JSON.stringify({
+                "partner_id": window.location.hash.replace('#','')
+            })
+        }).then(resp => {
+            if (!resp.ok) throw resp
+            return resp.json()
+        }).then(resp => {
+            document.querySelector('#connectbtn').innerHTML = 'Requested'
+            document.querySelector('#connectbtn').classList.add('cursor-not-allowed')
+        }).catch(err => {
+            document.querySelector('#connectbtn').innerHTML = 'Requested'
+            document.querySelector('#connectbtn').classList.add('cursor-not-allowed')
+        })
+    }
+
+    function logout() {
+        localStorage.clear()
+        window.location.href="index.html"
+    }
+
+    main()
+</script>
+</html>
